@@ -47,8 +47,19 @@ public class grafico {
 
 	private JFrame Window;
 	private JTable table;
-	private boolean tecla = false;
+	private DefaultTableModel model = new DefaultTableModel();
+	private JButton btnNewButton = new JButton("Adicionar novo idlabel");
+	private JButton btnNewButton_2 = new JButton("Adicionar Linguaguem");
+	private JButton btnNewButton_3 = new JButton("Verificar Duplicados");
+	private JButton btnNewButton_4 = new JButton("Remover Duplicados");
+	private JButton btnNewButton_5 = new JButton("Traduzir");
+	
+	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int screenHeight = screenSize.height;
+	private int screenWidth = screenSize.width;
 
+	private boolean tecla = false;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -79,81 +90,11 @@ public class grafico {
 	
 	@SuppressWarnings("deprecation")
 	private void initialize() {
-        if (System.getProperty("os.name").contains("Windows")) {
-        	RegistryKey windowsPersonalizeKey = new RegistryKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
-        	RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
-        	if (systemUsesLightThemeValue != null) {
-        		byte[] data = systemUsesLightThemeValue.getByteData();
-        		byte actualValue = data[0];
-        		boolean windows10Dark = actualValue == 0;
-        		if (windows10Dark) metodos.Setar_Modo_Dark();
-        	}
-        } else {
-        	String s;
-        	try {
-        		Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
-	        	BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        	s = stdInput.readLine();
-	        	if (s != null && s.contains("dark")) metodos.Setar_Modo_Dark();
-        	} catch (IOException e) {  
-        		e.printStackTrace();  
-    		    System.out.println("ERROR.RUNNING.CMD"); 
-        	}
-        }
-        
-		Window = new JFrame();
-		Window.setType(Type.POPUP);
-		Window.setTitle("Window");
-		Window.setBounds(100, 100, 450, 300);
-		Window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Window.setExtendedState(Frame.MAXIMIZED_BOTH);
-		Window.setLocationRelativeTo(null);
-		Window.getContentPane().setLayout(null);
-		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int screenHeight = screenSize.height;
-		int screenWidth = screenSize.width;
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(5, 100, screenWidth - 15, screenHeight - 180);
-		Window.getContentPane().add(scrollPane_1);
-
-		DefaultTableModel model = new DefaultTableModel();
-		table = new JTable(model);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setFillsViewportHeight(true);
-		scrollPane_1.setViewportView(table);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-		
-		JButton btnNewButton = new JButton("Adicionar novo idlabel");
-		btnNewButton.setBounds(screenWidth/2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-		Window.getContentPane().add(btnNewButton);
-
-		JButton btnNewButton_2 = new JButton("Adicionar Linguaguem");
-		btnNewButton_2.setBounds(screenWidth/2 - 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-		Window.getContentPane().add(btnNewButton_2);
-		
-		JButton btnNewButton_3 = new JButton("Verificar Duplicados");
-		btnNewButton_3.setBounds(screenWidth/2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-		Window.getContentPane().add(btnNewButton_3);
-
-		JButton btnNewButton_4 = new JButton("Remover Duplicados");
-		btnNewButton_4.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-		Window.getContentPane().add(btnNewButton_4);
-		btnNewButton_4.hide();
-		
-		JButton btnNewButton_5 = new JButton("Traduzir");
-		btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-		Window.getContentPane().add(btnNewButton_5);
-
-		// atribuir content as colunas //
-		model.addColumn("idlabel");
-		metodos.Setar_Objetos_Json("Array", 1);
-		for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-			model.addColumn(metodos.Obter_Arrays_Json().get(i));
-		}
-
+		VerificarOS();
+		CriarGrafico();
+		AtribuirColunas();
 		table.requestFocus();
+		
 		// atribuir content as linhas //
 		try (FileReader path = new FileReader(metodos.Obter_Path(), metodos.Obter_Charset())) {
 			JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
@@ -460,12 +401,7 @@ public class grafico {
 			});
 
 			// FUNCAO PARA ACTUALIZAR SE ESTAMOS A ADICIONAR UMA NOVA COLUNA E DAR HANDLE DE ERROS AO ADICIONAR A MESMA //
-			table.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
-					metodos.Setar_Verificacao(false);
-					metodos.Guardar_Numero_Linha(table.getSelectedRow());
-				}
-			});
+			ActualizarColuna();
 
 			// Funcao que procura a palavra e mostra na tabela //
 			table.addKeyListener(new KeyAdapter() {
@@ -531,6 +467,7 @@ public class grafico {
 					}
 				}
 			});
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -539,4 +476,85 @@ public class grafico {
 			e.printStackTrace();
 		}
 	}
+	
+	public void VerificarOS() {
+		if (System.getProperty("os.name").contains("Windows")) {
+        	RegistryKey windowsPersonalizeKey = new RegistryKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
+        	RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
+        	if (systemUsesLightThemeValue != null) {
+        		byte[] data = systemUsesLightThemeValue.getByteData();
+        		byte actualValue = data[0];
+        		boolean windows10Dark = actualValue == 0;
+        		if (windows10Dark) metodos.Setar_Modo_Dark();
+        	}
+        } else {
+        	String s;
+        	try {
+        		Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
+	        	BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        	s = stdInput.readLine();
+	        	if (s != null && s.contains("dark")) metodos.Setar_Modo_Dark();
+        	} catch (IOException e) {  
+        		e.printStackTrace();  
+    		    System.out.println("ERROR.RUNNING.CMD"); 
+        	}
+        }
+	}
+	
+	private void CriarGrafico (){ 
+		Window = new JFrame();
+		Window.setType(Type.POPUP);
+		Window.setTitle("Window");
+		Window.setBounds(100, 100, 450, 300);
+		Window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Window.setExtendedState(Frame.MAXIMIZED_BOTH);
+		Window.setLocationRelativeTo(null);
+		Window.getContentPane().setLayout(null);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(5, 100, screenWidth - 15, screenHeight - 180);
+		Window.getContentPane().add(scrollPane_1);
+
+		
+		table = new JTable(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setFillsViewportHeight(true);
+		scrollPane_1.setViewportView(table);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+		
+		btnNewButton.setBounds(screenWidth/2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		Window.getContentPane().add(btnNewButton);
+
+		btnNewButton_2.setBounds(screenWidth/2 - 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		Window.getContentPane().add(btnNewButton_2);
+		
+		btnNewButton_3.setBounds(screenWidth/2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		Window.getContentPane().add(btnNewButton_3);
+
+		btnNewButton_4.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		Window.getContentPane().add(btnNewButton_4);
+		btnNewButton_4.hide();
+		
+		btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		Window.getContentPane().add(btnNewButton_5);
+
+	}
+
+	private void AtribuirColunas () {
+		model.addColumn("idlabel");
+		metodos.Setar_Objetos_Json("Array", 1);
+		for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
+			model.addColumn(metodos.Obter_Arrays_Json().get(i));
+		}
+	}
+
+	private void ActualizarColuna () {
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				metodos.Setar_Verificacao(false);
+				metodos.Guardar_Numero_Linha(table.getSelectedRow());
+			}
+		});
+	}
+
 }
