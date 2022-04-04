@@ -30,48 +30,48 @@ public class metodos {
 	private static boolean Procura = false;
 	private static int numero_linha = 0;
 	
-	public static String Obter_Path () {
+	public static String ObterPath () {
 		return Ficheiro_Json;
 	}
 	
-	public static Charset Obter_Charset () {
+	public static Charset ObterCharset () {
 		return charset;
 	}
 	
-	public static boolean Setar_Verificacao(boolean estado) {
+	public static boolean SetarVerificacao(boolean estado) {
 		return Adicionado = estado;
 	}
 	
-	public static boolean Verificar_Estado_Verificacao () {
+	public static boolean VerificarEstadoVerificacao () {
 		return Adicionado;
 	}
 	
-	public static boolean Setar_Estado_Procura(boolean estado) {
+	public static boolean SetarEstadoProcura(boolean estado) {
 		return Procura = estado;
 	}
 	
-	public static boolean Verificar_Estado_Procura () {
+	public static boolean VerificarEstadoProcura () {
 		return Procura;
 	}
 	
-	public static boolean Setar_Valor_Procura(Vector<Integer> estado) {
+	public static boolean SetarValorProcura(Vector<Integer> estado) {
 		return Procura_Valor.addAll(estado);
 	}
 	
-	public static Vector<Integer> Obter_Valor_Procura () {
+	public static Vector<Integer> ObterValorProcura () {
 		return Procura_Valor;
 	}
 	
-	public static void Atribuir_Palavra_Nova (JSONObject palavra) {
+	public static void AtribuirPalavraNova (JSONObject palavra) {
 		palavra_nova = palavra;
 	}
 	
-	public static JSONObject Obter_Palavra_Nova () {
+	public static JSONObject ObterPalavraNova () {
 		return palavra_nova;
 	}
 	
 	public static void Setar_Objetos_Json (String Objeto_Array, int Numero) {
-		try (FileReader path = new FileReader(Obter_Path(), Obter_Charset())) 
+		try (FileReader path = new FileReader(ObterPath(), ObterCharset())) 
 		{		
 			JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
@@ -116,7 +116,7 @@ public class metodos {
 	public static void Escever_JSON (String objeto) {
 		FileWriter writeFile = null;
 		try {
-			writeFile = new FileWriter(Obter_Path(), Obter_Charset());
+			writeFile = new FileWriter(ObterPath(), ObterCharset());
 			writeFile.write(objeto);
 			writeFile.close();
 		} catch (IOException e) {
