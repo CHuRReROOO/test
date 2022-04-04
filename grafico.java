@@ -53,17 +53,17 @@ public class grafico {
 	private JButton btnNewButton_3;
 	private JButton btnNewButton_4;
 	private JButton btnNewButton_5;
-	
+
 	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private int screenHeight = screenSize.height;
 	private int screenWidth = screenSize.width;
-	
+
 	private JSONObject Obter_Lista_Linguaguens = new JSONObject();
 	private JSONArray langs = new JSONArray();
 	private JSONArray Componentes_Linguagem = new JSONArray();
 
 	private boolean tecla = false;
-	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -80,24 +80,22 @@ public class grafico {
 	public grafico() {
 		initialize();
 	}
-	
+
 	// TODO //
-		// implementar dark mode em linux (FALTA TESTAR)
-	
-		/* 
-		 	API Google Translate:
-		 		Plan Basic: $0.00 / mo 
-				Characters: 500 / month
-				Rate Limit:	5 requests per second
-		*/
+	// implementar dark mode em linux (FALTA TESTAR)
+
+	/*
+	 * API Google Translate: Plan Basic: $0.00 / mo Characters: 500 / month Rate
+	 * Limit: 5 requests per second
+	 */
 	// TODO //
-	
+
 	private void initialize() {
 		VerificarOS();
 		CriarGrafico();
 		AtribuirColunas();
 		table.requestFocus();
-		
+
 		// atribuir content as linhas //
 		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
 			Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
@@ -107,7 +105,7 @@ public class grafico {
 			for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 				JSONObject tudo = (JSONObject) iterator.next();
 				JSONObject content_rows = (JSONObject) tudo.get("lang");
-			
+
 				Vector<String> arr = new Vector<String>();
 				arr.add((String) tudo.get("idlabel"));
 				for (int i = 0; i < langs.size(); i++) {
@@ -116,32 +114,36 @@ public class grafico {
 				model.addRow(arr);
 				table.requestFocus();
 			}
-			
+
 			// adicionar nova linha //
 			AdicionarLinha();
 
 			// adicionar nova coluna //
 			AdicionarColuna();
-			
+
 			// verificar duplicados //
 			VerificarDuplicados();
-			
+
 			// REMOVER DUPLICADOS IDLABEL//
 			RemoverDuplicados();
-			
+
 			// TRADUZIR DE PT PARA OUTRAS LINGUAGUENS//
 			Traduzir();
-			
+
 			// PEQUENO FIX A FAZER: availablelangs APARECER EM 2 E NAO EM ULTIMO NO JSON //
 			// verificar mudancas nas rows e escrever mudancas no json //
 			table.getModel().addTableModelListener(new TableModelListener() {
 				@SuppressWarnings("unchecked")
 				public void tableChanged(TableModelEvent e) {
-					if (metodos.VerificarEstadoVerificacao())	return;
-					if (model.getRowCount() == 0 || model.getColumnCount() == 0) return;
-					if (tecla) return;
+					if (metodos.VerificarEstadoVerificacao())
+						return;
+					if (model.getRowCount() == 0 || model.getColumnCount() == 0)
+						return;
+					if (tecla)
+						return;
 					if (metodos.VerificarEstadoProcura()) {
-						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem
+								.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
 						metodos.SetarEstadoProcura(true);
 					} else {
 						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
@@ -156,12 +158,13 @@ public class grafico {
 							metodos.SetarEstadoProcura(false);
 						}
 					}
-					
+
 					table.requestFocus();
 				}
 			});
 
-			// FUNCAO PARA ACTUALIZAR SE ESTAMOS A ADICIONAR UMA NOVA COLUNA E DAR HANDLE DE ERROS AO ADICIONAR A MESMA //
+			// FUNCAO PARA ACTUALIZAR SE ESTAMOS A ADICIONAR UMA NOVA COLUNA E DAR HANDLE DE
+			// ERROS AO ADICIONAR A MESMA //
 			table.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					metodos.SetarVerificacao(false);
@@ -176,13 +179,13 @@ public class grafico {
 					// TECLA ESQ VOLTA Ha TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						btnNewButton_4.hide();
-						
+
 						tecla = true;
 						model.setRowCount(0);
 						model.setColumnCount(0);
 
 						model.addColumn("idlabel");
-						metodos.Setar_Objetos_Json("Array", 1);
+						metodos.SetarObjetosJson("Array", 1);
 						for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 							model.addColumn(metodos.ObterArraysJson().get(i));
 						}
@@ -200,15 +203,18 @@ public class grafico {
 						}
 						table.requestFocus();
 						tecla = false;
-						btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
+								screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
 
 					// PROCURAR PALAVRA CTRL + F //
 					metodos.SetarVerificacao(true);
 					if ((e.getKeyCode() == KeyEvent.VK_F) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 						btnNewButton_4.hide();
-						String procurar_palavra = JOptionPane.showInputDialog(Window,"Insira a palavra que deseja procurar", null);
-						if ((procurar_palavra == null) || procurar_palavra.isEmpty()) return;
+						String procurar_palavra = JOptionPane.showInputDialog(Window,
+								"Insira a palavra que deseja procurar", null);
+						if ((procurar_palavra == null) || procurar_palavra.isEmpty())
+							return;
 						int cont = 0;
 						model.setRowCount(0);
 						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
@@ -231,11 +237,12 @@ public class grafico {
 						cont = 0;
 						metodos.SetarVerificacao(false);
 						metodos.SetarEstadoProcura(true);
-						btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
+								screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
 				}
 			});
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -244,33 +251,36 @@ public class grafico {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void VerificarOS() {
 		if (System.getProperty("os.name").contains("Windows")) {
-        	RegistryKey windowsPersonalizeKey = new RegistryKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
-        	RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
-        	if (systemUsesLightThemeValue != null) {
-        		byte[] data = systemUsesLightThemeValue.getByteData();
-        		byte actualValue = data[0];
-        		boolean windows10Dark = actualValue == 0;
-        		if (windows10Dark) metodos.SetarModoDark();
-        	}
-        } else {
-        	String s;
-        	try {
-        		Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
-	        	BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        	s = stdInput.readLine();
-	        	if (s != null && s.contains("dark")) metodos.SetarModoDark();
-        	} catch (IOException e) {  
-        		e.printStackTrace();  
-    		    System.out.println("ERROR.RUNNING.CMD"); 
-        	}
-        }
+			RegistryKey windowsPersonalizeKey = new RegistryKey(
+					"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
+			RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
+			if (systemUsesLightThemeValue != null) {
+				byte[] data = systemUsesLightThemeValue.getByteData();
+				byte actualValue = data[0];
+				boolean windows10Dark = actualValue == 0;
+				if (windows10Dark)
+					metodos.SetarModoDark();
+			}
+		} else {
+			String s;
+			try {
+				Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				s = stdInput.readLine();
+				if (s != null && s.contains("dark"))
+					metodos.SetarModoDark();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("ERROR.RUNNING.CMD");
+			}
+		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	private void CriarGrafico (){ 
+	private void CriarGrafico() {
 		Window = new JFrame();
 		Window.setType(Type.POPUP);
 		Window.setTitle("Window");
@@ -290,52 +300,59 @@ public class grafico {
 		table.setFillsViewportHeight(true);
 		scrollPane_1.setViewportView(table);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-		
+
 		btnNewButton = new JButton("Adicionar novo idlabel");
-		btnNewButton.setBounds(screenWidth/2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton.setBounds(screenWidth / 2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,
+				screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton);
 
 		btnNewButton_2 = new JButton("Adicionar Linguaguem");
-		btnNewButton_2.setBounds(screenWidth/2 - 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_2.setBounds(screenWidth / 2 - 200, screenHeight - screenHeight + 35,
+				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_2);
-		
+
 		btnNewButton_3 = new JButton("Verificar Duplicados");
-		btnNewButton_3.setBounds(screenWidth/2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_3.setBounds(screenWidth / 2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,
+				screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_3);
 
 		btnNewButton_4 = new JButton("Remover Duplicados");
-		btnNewButton_4.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_4.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
+				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_4);
 		btnNewButton_4.hide();
-		
+
 		btnNewButton_5 = new JButton("Traduzir");
-		btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
+				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_5);
 	}
 
-	private void AtribuirColunas () {
+	private void AtribuirColunas() {
 		model.addColumn("idlabel");
-		metodos.Setar_Objetos_Json("Array", 1);
+		metodos.SetarObjetosJson("Array", 1);
 		for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 			model.addColumn(metodos.ObterArraysJson().get(i));
 		}
 	}
 
-	private void AdicionarLinha () {
+	private void AdicionarLinha() {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
-				String linguaguem = JOptionPane.showInputDialog(Window,"Insira o idlabel que deseja adicionar", null);
-				if ((linguaguem == null) || linguaguem.isEmpty()) return;
+				String linguaguem = JOptionPane.showInputDialog(Window, "Insira o idlabel que deseja adicionar", null);
+				if ((linguaguem == null) || linguaguem.isEmpty())
+					return;
 				for (int i = 0; i < Componentes_Linguagem.size(); i++) {
 					JSONObject texto_objeto = (JSONObject) Componentes_Linguagem.get(i);
 					if (linguaguem.equals(texto_objeto.get("idlabel"))) {
-						JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!","Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!",
+								"Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
-				
+
 				JSONObject objeto_id = new JSONObject();
 				objeto_id.put("idlabel", linguaguem);
 				JSONObject objeto_langs = new JSONObject();
@@ -348,25 +365,29 @@ public class grafico {
 				Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
 				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
 				metodos.SetarVerificacao(true);
-				model.addRow(new Object[]{linguaguem});
-				Rectangle rect = table.getCellRect(Componentes_Linguagem.size()-1, Componentes_Linguagem.size()-1, true);
+				model.addRow(new Object[] { linguaguem });
+				Rectangle rect = table.getCellRect(Componentes_Linguagem.size() - 1, Componentes_Linguagem.size() - 1,
+						true);
 				table.scrollRectToVisible(rect);
-				table.setRowSelectionInterval(Componentes_Linguagem.size()-1, Componentes_Linguagem.size()-1);
+				table.setRowSelectionInterval(Componentes_Linguagem.size() - 1, Componentes_Linguagem.size() - 1);
 				table.requestFocus();
 			}
 		});
 	}
-	
-	private void AdicionarColuna () {
+
+	private void AdicionarColuna() {
 		btnNewButton_2.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
-				String linguaguem = JOptionPane.showInputDialog(Window,"Insira a nova linguaguem que deseja adicionar", null);
-				if ((linguaguem == null) || linguaguem.isEmpty()) return;
+				String linguaguem = JOptionPane.showInputDialog(Window, "Insira a nova linguaguem que deseja adicionar",
+						null);
+				if ((linguaguem == null) || linguaguem.isEmpty())
+					return;
 				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 					if (linguaguem.equals(metodos.ObterArraysJson().get(i))) {
-						JOptionPane.showMessageDialog(new JFrame(), "A linguaguem [" + linguaguem + "] j� existe!","Erro: Linguaguem j� existe", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(new JFrame(), "A linguaguem [" + linguaguem + "] j� existe!",
+								"Erro: Linguaguem j� existe", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -385,31 +406,32 @@ public class grafico {
 		});
 	}
 
-	private void VerificarDuplicados () {
+	private void VerificarDuplicados() {
 		btnNewButton_3.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("deprecation")
 			public void mouseClicked(MouseEvent e) {
-				btnNewButton_5.setBounds(screenWidth/2 + 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,
+						screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 				metodos.SetarVerificacao(true);
 				model.setRowCount(0);
 				model.setColumnCount(0);
 				model.addColumn("idlabel");
-				metodos.Setar_Objetos_Json("Array", 1);
+				metodos.SetarObjetosJson("Array", 1);
 				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
-				
+
 				int contagem = 0;
-				Set <String> stationCodes = new HashSet<String>();
-				Set <String> stationCodes2 = new HashSet<String>();
-				
+				Set<String> stationCodes = new HashSet<String>();
+				Set<String> stationCodes2 = new HashSet<String>();
+
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
 					String oi = (String) tudo.get("idlabel");
-					
+
 					// Verificar idlabels duplicados //
-					if(stationCodes.contains(oi)) {
+					if (stationCodes.contains(oi)) {
 						contagem += 1;
 						Vector<String> arr = new Vector<String>();
 						arr.add((String) tudo.get("idlabel"));
@@ -418,12 +440,12 @@ public class grafico {
 						}
 						model.addRow(arr);
 						continue;
-					} else{
+					} else {
 						stationCodes.add(oi);
 					}
-					
+
 					// Verificar default languague duplicada //
-					if(stationCodes2.contains(content_rows.get("pt"))) {
+					if (stationCodes2.contains(content_rows.get("pt"))) {
 						contagem += 1;
 						Vector<String> arr2 = new Vector<String>();
 						arr2.add((String) tudo.get("idlabel"));
@@ -435,45 +457,47 @@ public class grafico {
 					} else {
 						stationCodes2.add((String) content_rows.get("pt"));
 					}
-					
+
 				}
-				if (contagem > 0) btnNewButton_4.show();
+				if (contagem > 0)
+					btnNewButton_4.show();
 				table.setDefaultEditor(Object.class, null);
 				table.requestFocus();
 			}
 		});
 	}
 
-	private void RemoverDuplicados () {
+	private void RemoverDuplicados() {
 		btnNewButton_4.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
-				Set <String> stationCodes = new HashSet<String>();
+				Set<String> stationCodes = new HashSet<String>();
 //				Set <String> stationCodes2 = new HashSet<String>();
 				JSONArray tempArray = new JSONArray();
-				
+
 				model.setRowCount(0);
 				model.setColumnCount(0);
 
 				model.addColumn("idlabel");
-				metodos.Setar_Objetos_Json("Array", 1);
+				metodos.SetarObjetosJson("Array", 1);
 				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
-				
+
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
 					String oi = (String) tudo.get("idlabel");
-					
+
 					// Verificar idlabels duplicados //
-					if(stationCodes.contains(oi)) {
-						if (!(tempArray.contains(oi))) tempArray.add(tudo);
+					if (stationCodes.contains(oi)) {
+						if (!(tempArray.contains(oi)))
+							tempArray.add(tudo);
 						continue;
-					} else{
+					} else {
 						stationCodes.add(oi);
 					}
-					
+
 					// Verificar default languague duplicada //
 //					if(stationCodes2.contains(content_rows.get("pt"))) {
 //						if (!(tempArray.contains(tudo))) tempArray.add(tudo);
@@ -481,9 +505,9 @@ public class grafico {
 //					} else {
 //						stationCodes2.add((String) content_rows.get("pt"));
 //					}
-					
-					//all.washtaskended
-					
+
+					// all.washtaskended
+
 					Vector<String> arr = new Vector<String>();
 					arr.add((String) tudo.get("idlabel"));
 					for (int i = 0; i < langs.size(); i++) {
@@ -491,58 +515,61 @@ public class grafico {
 					}
 					model.addRow(arr);
 				}
-				
+
 				for (int i = 0; i < Componentes_Linguagem.size(); i++) {
 					if (i < tempArray.size()) {
 						Componentes_Linguagem.remove(tempArray.get(i));
 //						Componentes_Linguagem.add(tempArray.get(i));
 					}
 				}
-				
+
 				Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
 				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
 				metodos.SetarVerificacao(true);
 				table.requestFocus();
 				btnNewButton_4.hide();
-				btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
+						screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 			}
 		});
 	}
 
-	private void Traduzir () {
+	private void Traduzir() {
 		btnNewButton_5.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("unchecked")
 			public void mouseClicked(MouseEvent e) {
 				JSONArray tempArray = new JSONArray();
 				JSONObject palavra = new JSONObject();
 				JSONObject palavra_traduzida = new JSONObject();
-				
+
 				metodos.SetarVerificacao(true);
 				model.setRowCount(0);
 				model.setColumnCount(0);
-				
+
 				model.addColumn("idlabel");
-				metodos.Setar_Objetos_Json("Array", 1);
+				metodos.SetarObjetosJson("Array", 1);
 				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
-				
+
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
 					tempArray.add(content_rows);
 				}
-				
-				palavra = (JSONObject) tempArray.get(metodos.ObterNumeroLinha());			
-							
+
+				palavra = (JSONObject) tempArray.get(metodos.ObterNumeroLinha());
+
 				for (int i = 1; i < langs.size(); i++) {
-					HttpRequest request = HttpRequest.newBuilder() 
+					HttpRequest request = HttpRequest.newBuilder()
 							.uri(URI.create("https://google-translate1.p.rapidapi.com/language/translate/v2"))
 							.header("content-type", "application/x-www-form-urlencoded")
 							.header("Accept-Encoding", "application/gzip")
 							.header("X-RapidAPI-Host", "google-translate1.p.rapidapi.com")
-							.header("X-RapidAPI-Key", "ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8") // ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8 // c98c748fd5msh420678769cff72fp104aadjsnb2916da78f6e
-							.method("POST", HttpRequest.BodyPublishers.ofString("q=" + palavra.get(langs.get(0))+ "&target=" + langs.get(i)))
+							.header("X-RapidAPI-Key", "ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8") // ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8 c98c748fd5msh420678769cff72fp104aadjsnb2916da78f6e
+							.method("POST",
+									HttpRequest.BodyPublishers
+											.ofString("q=" + palavra.get(langs.get(0)) + "&target=" + langs.get(i)))
 							.build();
 					HttpResponse<String> response;
 					try {
@@ -556,8 +583,9 @@ public class grafico {
 						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 							JSONObject tudo = (JSONObject) iterator.next();
 							JSONObject content_rows = (JSONObject) tudo.get("lang");
-							
-							if (palavra.get(langs.get(0)) != null && palavra.get(langs.get(0)) == content_rows.get(langs.get(0))) {
+
+							if (palavra.get(langs.get(0)) != null
+									&& palavra.get(langs.get(0)) == content_rows.get(langs.get(0))) {
 								content_rows.replace(langs.get(i), palavra_traduzida_final.get("translatedText"));
 							}
 						}
@@ -569,7 +597,7 @@ public class grafico {
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
-					
+
 					Vector<String> arr = new Vector<String>();
 					arr.add((String) tudo.get("idlabel"));
 					for (int ii = 0; ii < langs.size(); ii++) {
@@ -584,5 +612,5 @@ public class grafico {
 			}
 		});
 	}
-	
+
 }
