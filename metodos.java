@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileSystemView;
 
 import org.json.simple.JSONArray;
@@ -75,16 +77,16 @@ public class metodos {
 			JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
 			
-			if (Objeto_Array == "Objeto" && Numero == 1) Atribuir_Objeto_Json(Obter_Lista_Linguaguens);
-			if (Objeto_Array == "Array" && Numero == 1) Atribuir_Arrays_Json(langs);
-			if (Objeto_Array == "Array" && Numero == 2) Atribuir_Arrays_Json(Componentes_Linguagem);
+			if (Objeto_Array.equals("Objeto") && Numero == 1) Atribuir_Objeto_Json(Obter_Lista_Linguaguens);
+			if (Objeto_Array.equals("Array") && Numero == 1) Atribuir_Arrays_Json(langs);
+			if (Objeto_Array.equals("Array") && Numero == 2) Atribuir_Arrays_Json(Componentes_Linguagem);
 			
 			for(Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 				JSONObject tudo = (JSONObject) iterator.next();
 				JSONObject content_rows = (JSONObject) tudo.get("lang");
 				
-				if (Objeto_Array == "Objeto" && Numero == 2) Atribuir_Objeto_Json(tudo);
-				if (Objeto_Array == "Objeto" && Numero == 3) Atribuir_Objeto_Json(content_rows);
+				if (Objeto_Array.equals("Objeto") && Numero == 2) Atribuir_Objeto_Json(tudo);
+				if (Objeto_Array.equals("Objeto") && Numero == 3) Atribuir_Objeto_Json(content_rows);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -138,9 +140,9 @@ public class metodos {
 		UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
 		UIManager.put("text", new Color(230, 230, 230));
 		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					UIManager.setLookAndFeel(info.getClassName());
 					break;
 				}
 	    	}
@@ -150,7 +152,7 @@ public class metodos {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 		    e.printStackTrace();
-		} catch (javax.swing.UnsupportedLookAndFeelException e) {
+		} catch (UnsupportedLookAndFeelException e) {
 		    e.printStackTrace();
 		} catch (Exception e) {
 		    e.printStackTrace();
