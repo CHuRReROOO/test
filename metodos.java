@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileSystemView;
 
 import org.json.simple.JSONArray;
@@ -29,64 +27,64 @@ public class metodos {
 	private static boolean Adicionado = false;
 	private static boolean Procura = false;
 	private static int numero_linha = 0;
-	
-	public static String ObterPath () {
+
+	public static String Obter_Path () {
 		return Ficheiro_Json;
 	}
-	
-	public static Charset ObterCharset () {
+
+	public static Charset Obter_Charset () {
 		return charset;
 	}
-	
-	public static boolean SetarVerificacao(boolean estado) {
+
+	public static boolean Setar_Verificacao(boolean estado) {
 		return Adicionado = estado;
 	}
-	
-	public static boolean VerificarEstadoVerificacao () {
+
+	public static boolean Verificar_Estado_Verificacao () {
 		return Adicionado;
 	}
-	
-	public static boolean SetarEstadoProcura(boolean estado) {
+
+	public static boolean Setar_Estado_Procura(boolean estado) {
 		return Procura = estado;
 	}
-	
-	public static boolean VerificarEstadoProcura () {
+
+	public static boolean Verificar_Estado_Procura () {
 		return Procura;
 	}
-	
-	public static boolean SetarValorProcura(Vector<Integer> estado) {
+
+	public static boolean Setar_Valor_Procura(Vector<Integer> estado) {
 		return Procura_Valor.addAll(estado);
 	}
-	
-	public static Vector<Integer> ObterValorProcura () {
+
+	public static Vector<Integer> Obter_Valor_Procura () {
 		return Procura_Valor;
 	}
-	
-	public static void AtribuirPalavraNova (JSONObject palavra) {
+
+	public static void Atribuir_Palavra_Nova (JSONObject palavra) {
 		palavra_nova = palavra;
 	}
-	
-	public static JSONObject ObterPalavraNova () {
+
+	public static JSONObject Obter_Palavra_Nova () {
 		return palavra_nova;
 	}
-	
+
 	public static void Setar_Objetos_Json (String Objeto_Array, int Numero) {
-		try (FileReader path = new FileReader(ObterPath(), ObterCharset())) 
+		try (FileReader path = new FileReader(Obter_Path(), Obter_Charset())) 
 		{		
 			JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
-			
-			if (Objeto_Array.equals("Objeto") && Numero == 1) Atribuir_Objeto_Json(Obter_Lista_Linguaguens);
-			if (Objeto_Array.equals("Array") && Numero == 1) Atribuir_Arrays_Json(langs);
-			if (Objeto_Array.equals("Array") && Numero == 2) Atribuir_Arrays_Json(Componentes_Linguagem);
-			
+
+			if (Objeto_Array == "Objeto" && Numero == 1) Atribuir_Objeto_Json(Obter_Lista_Linguaguens);
+			if (Objeto_Array == "Array" && Numero == 1) Atribuir_Arrays_Json(langs);
+			if (Objeto_Array == "Array" && Numero == 2) Atribuir_Arrays_Json(Componentes_Linguagem);
+
 			for(Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 				JSONObject tudo = (JSONObject) iterator.next();
 				JSONObject content_rows = (JSONObject) tudo.get("lang");
-				
-				if (Objeto_Array.equals("Objeto") && Numero == 2) Atribuir_Objeto_Json(tudo);
-				if (Objeto_Array.equals("Objeto") && Numero == 3) Atribuir_Objeto_Json(content_rows);
+
+				if (Objeto_Array == "Objeto" && Numero == 2) Atribuir_Objeto_Json(tudo);
+				if (Objeto_Array == "Objeto" && Numero == 3) Atribuir_Objeto_Json(content_rows);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -96,11 +94,11 @@ public class metodos {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void Atribuir_Objeto_Json (JSONObject obj) {
 		Objetos = obj;
 	}
-	
+
 	public static JSONObject Obter_Objeto_Json () {
 		return Objetos;
 	}
@@ -108,22 +106,22 @@ public class metodos {
 	private static void Atribuir_Arrays_Json (JSONArray Array) {
 		Arrays = Array;
 	}
-	
+
 	public static JSONArray Obter_Arrays_Json () {
 		return Arrays;
 	}
-	
+
 	public static void Escever_JSON (String objeto) {
 		FileWriter writeFile = null;
 		try {
-			writeFile = new FileWriter(ObterPath(), ObterCharset());
+			writeFile = new FileWriter(Obter_Path(), Obter_Charset());
 			writeFile.write(objeto);
 			writeFile.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void Setar_Modo_Dark () {
 		UIManager.put("control", new Color(128, 128, 128));
 		UIManager.put("info", new Color(128,128,128));
@@ -140,9 +138,9 @@ public class metodos {
 		UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
 		UIManager.put("text", new Color(230, 230, 230));
 		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
 					break;
 				}
 	    	}
@@ -152,18 +150,18 @@ public class metodos {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 		    e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
+		} catch (javax.swing.UnsupportedLookAndFeelException e) {
 		    e.printStackTrace();
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
 	}
-	
+
 	public static void Guardar_Numero_Linha (int linha) {
 		numero_linha = linha;
 	}
-	
-	
+
+
 	public static int Obter_Numero_Linha () {
 		return numero_linha;
 	}
