@@ -94,9 +94,7 @@ public class grafico {
         		Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
 	        	BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	        	s = stdInput.readLine();
-	        	if (s != null) {
-	        		if (s.contains("dark")) metodos.Setar_Modo_Dark();
-	        	}
+	        	if (s != null && s.contains("dark")) metodos.Setar_Modo_Dark();
         	} catch (IOException e) {  
         		e.printStackTrace();  
     		    System.out.println("ERROR.RUNNING.CMD"); 
