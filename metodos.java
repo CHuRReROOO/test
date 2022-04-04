@@ -1,4 +1,5 @@
 package estagio;
+
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,29 +21,29 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class metodos {
-	private static String Ficheiro_Json = FileSystemView.getFileSystemView().getHomeDirectory() + "/saida.json";
-	private static Charset charset = StandardCharsets.UTF_8;
-	private static Vector<Integer> Procura_Valor = new Vector<Integer>();
-	private static JSONObject palavra_nova = new JSONObject();
+	private static String FicheiroJson = FileSystemView.getFileSystemView().getHomeDirectory() + "/saida.json";
+	private static Charset Charset = StandardCharsets.UTF_8;
+	private static Vector<Integer> ProcuraValor = new Vector<Integer>();
+	private static JSONObject PalavraNova = new JSONObject();
 	private static JSONObject Objetos = new JSONObject();
 	private static JSONArray Arrays = new JSONArray();
-	private static boolean Adicionado = false;
-	private static boolean Procura = false;
-	private static int numero_linha = 0;
+	private static boolean Adicionado;
+	private static boolean Procura;
+	private static int NumeroLinha;
 
-	public static String ObterPath () {
-		return Ficheiro_Json;
+	public static String ObterPath() {
+		return FicheiroJson;
 	}
 
-	public static Charset ObterCharset () {
-		return charset;
+	public static Charset ObterCharset() {
+		return Charset;
 	}
 
 	public static boolean SetarVerificacao(boolean estado) {
 		return Adicionado = estado;
 	}
 
-	public static boolean VerificarEstadoVerificacao () {
+	public static boolean VerificarEstadoVerificacao() {
 		return Adicionado;
 	}
 
@@ -50,43 +51,47 @@ public class metodos {
 		return Procura = estado;
 	}
 
-	public static boolean VerificarEstadoProcura () {
+	public static boolean VerificarEstadoProcura() {
 		return Procura;
 	}
 
 	public static boolean SetarValorProcura(Vector<Integer> estado) {
-		return Procura_Valor.addAll(estado);
+		return ProcuraValor.addAll(estado);
 	}
 
-	public static Vector<Integer> ObterValorProcura () {
-		return Procura_Valor;
+	public static Vector<Integer> ObterValorProcura() {
+		return ProcuraValor;
 	}
 
-	public static void AtribuirPalavraNova (JSONObject palavra) {
-		palavra_nova = palavra;
+	public static void AtribuirPalavraNova(JSONObject palavra) {
+		PalavraNova = palavra;
 	}
 
-	public static JSONObject ObterPalavraNova () {
-		return palavra_nova;
+	public static JSONObject ObterPalavraNova() {
+		return PalavraNova;
 	}
 
-	public static void Setar_Objetos_Json (String Objeto_Array, int Numero) {
-		try (FileReader path = new FileReader(ObterPath(), ObterCharset())) 
-		{		
-			JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
-			JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
-			JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
+	public static void SetarObjetosJson(String ObjetoArray, int Numero) {
+		try (FileReader path = new FileReader(ObterPath(), ObterCharset())) {
+			final JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
+			final JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
+			final JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
 
-			if (Objeto_Array.equals("Objeto") && Numero == 1) AtribuirObjetoJson(Obter_Lista_Linguaguens);
-			if (Objeto_Array.equals("Array") && Numero == 1) AtribuirArraysJson(langs);
-			if (Objeto_Array.equals("Array") && Numero == 2) AtribuirArraysJson(Componentes_Linguagem);
+			if (ObjetoArray.equals("Objeto") && Numero == 1)
+				AtribuirObjetoJson(Obter_Lista_Linguaguens);
+			if (ObjetoArray.equals("Array") && Numero == 1)
+				AtribuirArraysJson(langs);
+			if (ObjetoArray.equals("Array") && Numero == 2)
+				AtribuirArraysJson(Componentes_Linguagem);
+			
+			for (final Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
+				final JSONObject tudo = (JSONObject) iterator.next();
+				final JSONObject content_rows = (JSONObject) tudo.get("lang");
 
-			for(Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-				JSONObject tudo = (JSONObject) iterator.next();
-				JSONObject content_rows = (JSONObject) tudo.get("lang");
-
-				if (Objeto_Array.equals("Objeto") && Numero == 2) AtribuirObjetoJson(tudo);
-				if (Objeto_Array.equals("Objeto") && Numero == 3) AtribuirObjetoJson(content_rows);
+				if (ObjetoArray.equals("Objeto") && Numero == 2)
+					AtribuirObjetoJson(tudo);
+				if (ObjetoArray.equals("Objeto") && Numero == 3)
+					AtribuirObjetoJson(content_rows);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -97,26 +102,25 @@ public class metodos {
 		}
 	}
 
-	private static void AtribuirObjetoJson (JSONObject obj) {
+	private static void AtribuirObjetoJson(JSONObject obj) {
 		Objetos = obj;
 	}
 
-	public static JSONObject ObterObjetoJson () {
+	public static JSONObject ObterObjetoJson() {
 		return Objetos;
 	}
 
-	private static void AtribuirArraysJson (JSONArray Array) {
+	private static void AtribuirArraysJson(JSONArray Array) {
 		Arrays = Array;
 	}
 
-	public static JSONArray ObterArraysJson () {
+	public static JSONArray ObterArraysJson() {
 		return Arrays;
 	}
 
-	public static void EsceverJSON (String objeto) {
-		FileWriter writeFile = null;
+	public static void EsceverJSON(String objeto) {
 		try {
-			writeFile = new FileWriter(ObterPath(), ObterCharset());
+			FileWriter writeFile = new FileWriter(ObterPath(), ObterCharset());
 			writeFile.write(objeto);
 			writeFile.close();
 		} catch (IOException e) {
@@ -124,18 +128,18 @@ public class metodos {
 		}
 	}
 
-	public static void SetarModoDark () {
+	public static void SetarModoDark() {
 		UIManager.put("control", new Color(128, 128, 128));
-		UIManager.put("info", new Color(128,128,128));
+		UIManager.put("info", new Color(128, 128, 128));
 		UIManager.put("nimbusBase", new Color(18, 30, 49));
 		UIManager.put("nimbusAlertYellow", new Color(248, 187, 0));
 		UIManager.put("nimbusDisabledText", new Color(128, 128, 128));
-		UIManager.put("nimbusFocus", new Color(115,164,209));
-		UIManager.put("nimbusGreen", new Color(176,179,50));
+		UIManager.put("nimbusFocus", new Color(115, 164, 209));
+		UIManager.put("nimbusGreen", new Color(176, 179, 50));
 		UIManager.put("nimbusInfoBlue", new Color(66, 139, 221));
 		UIManager.put("nimbusLightBackground", new Color(18, 30, 49));
-		UIManager.put("nimbusOrange", new Color(191,98,4));
-		UIManager.put("nimbusRed", new Color(169,46,34));
+		UIManager.put("nimbusOrange", new Color(191, 98, 4));
+		UIManager.put("nimbusRed", new Color(169, 46, 34));
 		UIManager.put("nimbusSelectedText", new Color(255, 255, 255));
 		UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
 		UIManager.put("text", new Color(230, 230, 230));
@@ -145,26 +149,25 @@ public class metodos {
 					UIManager.setLookAndFeel(info.getClassName());
 					break;
 				}
-	    	}
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		} catch (UnsupportedLookAndFeelException e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
-	public static void GuardarNumeroLinha (int linha) {
-		numero_linha = linha;
+	public static void GuardarNumeroLinha(int linha) {
+		NumeroLinha = linha;
 	}
 
-
-	public static int ObterNumeroLinha () {
-		return numero_linha;
+	public static int ObterNumeroLinha() {
+		return NumeroLinha;
 	}
 }
