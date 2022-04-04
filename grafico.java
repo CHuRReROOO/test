@@ -99,7 +99,7 @@ public class grafico {
 		table.requestFocus();
 		
 		// atribuir content as linhas //
-		try (FileReader path = new FileReader(metodos.Obter_Path(), metodos.Obter_Charset())) {
+		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
 			Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
@@ -137,23 +137,23 @@ public class grafico {
 			table.getModel().addTableModelListener(new TableModelListener() {
 				@SuppressWarnings("unchecked")
 				public void tableChanged(TableModelEvent e) {
-					if (metodos.Verificar_Estado_Verificacao())	return;
+					if (metodos.VerificarEstadoVerificacao())	return;
 					if (model.getRowCount() == 0 || model.getColumnCount() == 0) return;
 					if (tecla) return;
-					if (metodos.Verificar_Estado_Procura()) {
-						metodos.Atribuir_Palavra_Nova((JSONObject) Componentes_Linguagem.get(metodos.Obter_Valor_Procura().get(e.getFirstRow()) - 1));
-						metodos.Setar_Estado_Procura(true);
+					if (metodos.VerificarEstadoProcura()) {
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
+						metodos.SetarEstadoProcura(true);
 					} else {
-						metodos.Atribuir_Palavra_Nova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
 					}
 					String palavra_nova_editada = table.getModel().getValueAt(e.getFirstRow(), e.getColumn()) + "";
 					for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 						JSONObject tudo = (JSONObject) iterator.next();
 						JSONObject content_rows = (JSONObject) tudo.get("lang");
-						if (tudo.equals(metodos.Obter_Palavra_Nova()) && e.getColumn() != 0) {
+						if (tudo.equals(metodos.ObterPalavraNova()) && e.getColumn() != 0) {
 							content_rows.replace((langs.get(e.getColumn() - 1)), palavra_nova_editada);
-							metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-							metodos.Setar_Estado_Procura(false);
+							metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
+							metodos.SetarEstadoProcura(false);
 						}
 					}
 					
@@ -164,8 +164,8 @@ public class grafico {
 			// FUNCAO PARA ACTUALIZAR SE ESTAMOS A ADICIONAR UMA NOVA COLUNA E DAR HANDLE DE ERROS AO ADICIONAR A MESMA //
 			table.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					metodos.Setar_Verificacao(false);
-					metodos.Guardar_Numero_Linha(table.getSelectedRow());
+					metodos.SetarVerificacao(false);
+					metodos.GuardarNumeroLinha(table.getSelectedRow());
 				}
 			});
 
@@ -183,8 +183,8 @@ public class grafico {
 
 						model.addColumn("idlabel");
 						metodos.Setar_Objetos_Json("Array", 1);
-						for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-							model.addColumn(metodos.Obter_Arrays_Json().get(i));
+						for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+							model.addColumn(metodos.ObterArraysJson().get(i));
 						}
 
 						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
@@ -204,7 +204,7 @@ public class grafico {
 					}
 
 					// PROCURAR PALAVRA CTRL + F //
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					if ((e.getKeyCode() == KeyEvent.VK_F) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 						btnNewButton_4.hide();
 						String procurar_palavra = JOptionPane.showInputDialog(Window,"Insira a palavra que deseja procurar", null);
@@ -224,13 +224,13 @@ public class grafico {
 								}
 								arr3.add(cont);
 								model.addRow(arr2);
-								metodos.Setar_Valor_Procura(arr3);
+								metodos.SetarValorProcura(arr3);
 							}
 						}
 						table.requestFocus();
 						cont = 0;
-						metodos.Setar_Verificacao(false);
-						metodos.Setar_Estado_Procura(true);
+						metodos.SetarVerificacao(false);
+						metodos.SetarEstadoProcura(true);
 						btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
 				}
@@ -253,7 +253,7 @@ public class grafico {
         		byte[] data = systemUsesLightThemeValue.getByteData();
         		byte actualValue = data[0];
         		boolean windows10Dark = actualValue == 0;
-        		if (windows10Dark) metodos.Setar_Modo_Dark();
+        		if (windows10Dark) metodos.SetarModoDark();
         	}
         } else {
         	String s;
@@ -261,7 +261,7 @@ public class grafico {
         		Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
 	        	BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	        	s = stdInput.readLine();
-	        	if (s != null && s.contains("dark")) metodos.Setar_Modo_Dark();
+	        	if (s != null && s.contains("dark")) metodos.SetarModoDark();
         	} catch (IOException e) {  
         		e.printStackTrace();  
     		    System.out.println("ERROR.RUNNING.CMD"); 
@@ -316,8 +316,8 @@ public class grafico {
 	private void AtribuirColunas () {
 		model.addColumn("idlabel");
 		metodos.Setar_Objetos_Json("Array", 1);
-		for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-			model.addColumn(metodos.Obter_Arrays_Json().get(i));
+		for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+			model.addColumn(metodos.ObterArraysJson().get(i));
 		}
 	}
 
@@ -346,8 +346,8 @@ public class grafico {
 				objeto_id.put("lang", objeto_langs);
 				Componentes_Linguagem.add(objeto_id);
 				Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
-				metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-				metodos.Setar_Verificacao(true);
+				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
+				metodos.SetarVerificacao(true);
 				model.addRow(new Object[]{linguaguem});
 				Rectangle rect = table.getCellRect(Componentes_Linguagem.size()-1, Componentes_Linguagem.size()-1, true);
 				table.scrollRectToVisible(rect);
@@ -364,8 +364,8 @@ public class grafico {
 				btnNewButton_4.hide();
 				String linguaguem = JOptionPane.showInputDialog(Window,"Insira a nova linguaguem que deseja adicionar", null);
 				if ((linguaguem == null) || linguaguem.isEmpty()) return;
-				for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-					if (linguaguem.equals(metodos.Obter_Arrays_Json().get(i))) {
+				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+					if (linguaguem.equals(metodos.ObterArraysJson().get(i))) {
 						JOptionPane.showMessageDialog(new JFrame(), "A linguaguem [" + linguaguem + "] j� existe!","Erro: Linguaguem j� existe", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
@@ -377,8 +377,8 @@ public class grafico {
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
 					content_rows.put(linguaguem, "");
 				}
-				metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-				metodos.Setar_Verificacao(true);
+				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
+				metodos.SetarVerificacao(true);
 				model.addColumn(linguaguem);
 				table.requestFocus();
 			}
@@ -390,13 +390,13 @@ public class grafico {
 			@SuppressWarnings("deprecation")
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_5.setBounds(screenWidth/2 + 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-				metodos.Setar_Verificacao(true);
+				metodos.SetarVerificacao(true);
 				model.setRowCount(0);
 				model.setColumnCount(0);
 				model.addColumn("idlabel");
 				metodos.Setar_Objetos_Json("Array", 1);
-				for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-					model.addColumn(metodos.Obter_Arrays_Json().get(i));
+				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
 				
 				int contagem = 0;
@@ -457,8 +457,8 @@ public class grafico {
 
 				model.addColumn("idlabel");
 				metodos.Setar_Objetos_Json("Array", 1);
-				for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-					model.addColumn(metodos.Obter_Arrays_Json().get(i));
+				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
 				
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
@@ -500,8 +500,8 @@ public class grafico {
 				}
 				
 				Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
-				metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-				metodos.Setar_Verificacao(true);
+				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
+				metodos.SetarVerificacao(true);
 				table.requestFocus();
 				btnNewButton_4.hide();
 				btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
@@ -517,14 +517,14 @@ public class grafico {
 				JSONObject palavra = new JSONObject();
 				JSONObject palavra_traduzida = new JSONObject();
 				
-				metodos.Setar_Verificacao(true);
+				metodos.SetarVerificacao(true);
 				model.setRowCount(0);
 				model.setColumnCount(0);
 				
 				model.addColumn("idlabel");
 				metodos.Setar_Objetos_Json("Array", 1);
-				for (int i = 0; i < metodos.Obter_Arrays_Json().size(); i++) {
-					model.addColumn(metodos.Obter_Arrays_Json().get(i));
+				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
+					model.addColumn(metodos.ObterArraysJson().get(i));
 				}
 				
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
@@ -533,7 +533,7 @@ public class grafico {
 					tempArray.add(content_rows);
 				}
 				
-				palavra = (JSONObject) tempArray.get(metodos.Obter_Numero_Linha());			
+				palavra = (JSONObject) tempArray.get(metodos.ObterNumeroLinha());			
 							
 				for (int i = 1; i < langs.size(); i++) {
 					HttpRequest request = HttpRequest.newBuilder() 
@@ -565,7 +565,7 @@ public class grafico {
 						e1.printStackTrace();
 					}
 				}
-				metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
+				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
 					JSONObject content_rows = (JSONObject) tudo.get("lang");
@@ -577,9 +577,9 @@ public class grafico {
 					}
 					model.addRow(arr);
 				}
-				Rectangle rect = table.getCellRect(metodos.Obter_Numero_Linha(), metodos.Obter_Numero_Linha(), true);
+				Rectangle rect = table.getCellRect(metodos.ObterNumeroLinha(), metodos.ObterNumeroLinha(), true);
 				table.scrollRectToVisible(rect);
-				table.setRowSelectionInterval(metodos.Obter_Numero_Linha(), metodos.Obter_Numero_Linha());
+				table.setRowSelectionInterval(metodos.ObterNumeroLinha(), metodos.ObterNumeroLinha());
 				table.requestFocus();
 			}
 		});
