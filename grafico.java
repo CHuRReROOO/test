@@ -96,7 +96,7 @@ public class grafico {
 		table.requestFocus();
 		
 		// atribuir content as linhas //
-		try (FileReader path = new FileReader(metodos.Obter_Path(), metodos.Obter_Charset())) {
+		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
 			JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
@@ -140,7 +140,7 @@ public class grafico {
 					Componentes_Linguagem.add(objeto_id);
 					Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
 					metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					model.addRow(new Object[]{linguaguem});
 					Rectangle rect = table.getCellRect(Componentes_Linguagem.size()-1, Componentes_Linguagem.size()-1, true);
 					table.scrollRectToVisible(rect);
@@ -170,7 +170,7 @@ public class grafico {
 						content_rows.put(linguaguem, "");
 					}
 					metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					model.addColumn(linguaguem);
 					table.requestFocus();
 				}
@@ -180,7 +180,7 @@ public class grafico {
 			btnNewButton_3.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					btnNewButton_5.setBounds(screenWidth/2 + 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					model.setRowCount(0);
 					model.setColumnCount(0);
 					model.addColumn("idlabel");
@@ -238,7 +238,7 @@ public class grafico {
 				@SuppressWarnings("unchecked")
 				public void mouseClicked(MouseEvent e) {
 					Set <String> stationCodes = new HashSet<String>();
-					Set <String> stationCodes2 = new HashSet<String>();
+//					Set <String> stationCodes2 = new HashSet<String>();
 					JSONArray tempArray = new JSONArray();
 					
 					model.setRowCount(0);
@@ -290,7 +290,7 @@ public class grafico {
 					
 					Obter_Lista_Linguaguens.put("elements", Componentes_Linguagem);
 					metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					table.requestFocus();
 					btnNewButton_4.hide();
 					btnNewButton_5.setBounds(screenWidth/2 + 200, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
@@ -305,7 +305,7 @@ public class grafico {
 					JSONObject palavra = new JSONObject();
 					JSONObject palavra_traduzida = new JSONObject();
 					
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					model.setRowCount(0);
 					model.setColumnCount(0);
 					
@@ -377,23 +377,23 @@ public class grafico {
 			table.getModel().addTableModelListener(new TableModelListener() {
 				@SuppressWarnings("unchecked")
 				public void tableChanged(TableModelEvent e) {
-					if (metodos.Verificar_Estado_Verificacao())	return;
+					if (metodos.VerificarEstadoVerificacao())	return;
 					if (model.getRowCount() == 0 || model.getColumnCount() == 0) return;
 					if (tecla) return;
-					if (metodos.Verificar_Estado_Procura()) {
-						metodos.Atribuir_Palavra_Nova((JSONObject) Componentes_Linguagem.get(metodos.Obter_Valor_Procura().get(e.getFirstRow()) - 1));
-						metodos.Setar_Estado_Procura(true);
+					if (metodos.VerificarEstadoProcura()) {
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
+						metodos.SetarEstadoProcura(true);
 					} else {
-						metodos.Atribuir_Palavra_Nova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
 					}
 					String palavra_nova_editada = table.getModel().getValueAt(e.getFirstRow(), e.getColumn()) + "";
 					for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 						JSONObject tudo = (JSONObject) iterator.next();
 						JSONObject content_rows = (JSONObject) tudo.get("lang");
-						if (tudo.equals(metodos.Obter_Palavra_Nova()) && e.getColumn() != 0) {
+						if (tudo.equals(metodos.ObterPalavraNova()) && e.getColumn() != 0) {
 							content_rows.replace((langs.get(e.getColumn() - 1)), palavra_nova_editada);
 							metodos.Escever_JSON(Obter_Lista_Linguaguens.toString());
-							metodos.Setar_Estado_Procura(false);
+							metodos.SetarEstadoProcura(false);
 						}
 					}
 					table.requestFocus();
@@ -405,7 +405,6 @@ public class grafico {
 
 			// Funcao que procura a palavra e mostra na tabela //
 			table.addKeyListener(new KeyAdapter() {
-				@SuppressWarnings("deprecation")
 				public void keyPressed(KeyEvent e) {
 					// TECLA ESQ VOLTA Ha TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -437,7 +436,7 @@ public class grafico {
 					}
 
 					// PROCURAR PALAVRA CTRL + F //
-					metodos.Setar_Verificacao(true);
+					metodos.SetarVerificacao(true);
 					if ((e.getKeyCode() == KeyEvent.VK_F) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 						btnNewButton_4.hide();
 						String procurar_palavra = JOptionPane.showInputDialog(Window,"Insira a palavra que deseja procurar", null);
@@ -457,13 +456,13 @@ public class grafico {
 								}
 								arr3.add(cont);
 								model.addRow(arr2);
-								metodos.Setar_Valor_Procura(arr3);
+								metodos.SetarValorProcura(arr3);
 							}
 						}
 						table.requestFocus();
 						cont = 0;
-						metodos.Setar_Verificacao(false);
-						metodos.Setar_Estado_Procura(true);
+						metodos.SetarVerificacao(false);
+						metodos.SetarEstadoProcura(true);
 					}
 				}
 			});
@@ -501,6 +500,7 @@ public class grafico {
         }
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void CriarGrafico (){ 
 		Window = new JFrame();
 		Window.setType(Type.POPUP);
@@ -551,7 +551,7 @@ public class grafico {
 	private void ActualizarColuna () {
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				metodos.Setar_Verificacao(false);
+				metodos.SetarVerificacao(false);
 				metodos.Guardar_Numero_Linha(table.getSelectedRow());
 			}
 		});
