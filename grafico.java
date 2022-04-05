@@ -8,13 +8,14 @@ import java.awt.Toolkit;
 import java.awt.Window.Type;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -97,23 +98,13 @@ public class grafico {
 		table.requestFocus();
 
 		// atribuir content as linhas //
-		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
+		try(BufferedReader path = Files.newBufferedReader(Paths.get(metodos.ObterPath()), metodos.ObterCharset())) {
+//		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
 			Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
 
-			for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-				JSONObject tudo = (JSONObject) iterator.next();
-				JSONObject content_rows = (JSONObject) tudo.get("lang");
-
-				Vector<String> arr = new Vector<String>();
-				arr.add((String) tudo.get("idlabel"));
-				for (int i = 0; i < langs.size(); i++) {
-					arr.add((String) content_rows.get(langs.get(i)));
-				}
-				model.addRow(arr);
-				table.requestFocus();
-			}
+			ActualizarNovamentColunas();
 
 			// adicionar nova linha //
 			AdicionarLinha();
@@ -135,15 +126,11 @@ public class grafico {
 			table.getModel().addTableModelListener(new TableModelListener() {
 				@SuppressWarnings("unchecked")
 				public void tableChanged(TableModelEvent e) {
-					if (metodos.VerificarEstadoVerificacao())
-						return;
-					if (model.getRowCount() == 0 || model.getColumnCount() == 0)
-						return;
-					if (tecla)
-						return;
+					if (metodos.VerificarEstadoVerificacao()) return;
+					if (model.getRowCount() == 0 || model.getColumnCount() == 0) return;
+					if (tecla) return;
 					if (metodos.VerificarEstadoProcura()) {
-						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem
-								.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
+						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(metodos.ObterValorProcura().get(e.getFirstRow()) - 1));
 						metodos.SetarEstadoProcura(true);
 					} else {
 						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
@@ -158,7 +145,6 @@ public class grafico {
 							metodos.SetarEstadoProcura(false);
 						}
 					}
-
 					table.requestFocus();
 				}
 			});
@@ -176,7 +162,7 @@ public class grafico {
 			table.addKeyListener(new KeyAdapter() {
 				@SuppressWarnings("deprecation")
 				public void keyPressed(KeyEvent e) {
-					// TECLA ESQ VOLTA Ha TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
+					// TECLA ESQ VOLTA HÁ TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						btnNewButton_4.hide();
 
@@ -189,22 +175,11 @@ public class grafico {
 						for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 							model.addColumn(metodos.ObterArraysJson().get(i));
 						}
-
-						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-							JSONObject tudo = (JSONObject) iterator.next();
-							JSONObject content_rows = (JSONObject) tudo.get("lang");
-
-							Vector<String> arr = new Vector<String>();
-							arr.add((String) tudo.get("idlabel"));
-							for (int i = 0; i < langs.size(); i++) {
-								arr.add((String) content_rows.get(langs.get(i)));
-							}
-							model.addRow(arr);
-						}
-						table.requestFocus();
+						
+						ActualizarNovamentColunas();
+						
 						tecla = false;
-						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
-								screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
 
 					// PROCURAR PALAVRA CTRL + F //
@@ -218,10 +193,10 @@ public class grafico {
 						int cont = 0;
 						model.setRowCount(0);
 						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-							Vector<String> arr2 = new Vector<String>();
-							Vector<Integer> arr3 = new Vector<Integer>();
-							JSONObject tudo = (JSONObject) iterator.next();
-							JSONObject content_rows = (JSONObject) tudo.get("lang");
+							final Vector<String> arr2 = new Vector<String>();
+							final Vector<Integer> arr3 = new Vector<Integer>();
+							final JSONObject tudo = (JSONObject) iterator.next();
+							final JSONObject content_rows = (JSONObject) tudo.get("lang");
 							cont += 1;
 							arr2.add((String) tudo.get("idlabel"));
 							if (tudo.toString().toLowerCase().contains(procurar_palavra.toLowerCase())) {
@@ -237,8 +212,7 @@ public class grafico {
 						cont = 0;
 						metodos.SetarVerificacao(false);
 						metodos.SetarEstadoProcura(true);
-						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
-								screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
 				}
 			});
@@ -254,24 +228,21 @@ public class grafico {
 
 	private void VerificarOS() {
 		if (System.getProperty("os.name").contains("Windows")) {
-			RegistryKey windowsPersonalizeKey = new RegistryKey(
-					"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
-			RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
+			final RegistryKey windowsPersonalizeKey = new RegistryKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
+			final RegistryValue systemUsesLightThemeValue = windowsPersonalizeKey.getValue("SystemUsesLightTheme");
 			if (systemUsesLightThemeValue != null) {
-				byte[] data = systemUsesLightThemeValue.getByteData();
-				byte actualValue = data[0];
-				boolean windows10Dark = actualValue == 0;
-				if (windows10Dark)
-					metodos.SetarModoDark();
+				final byte[] data = systemUsesLightThemeValue.getByteData();
+				final byte actualValue = data[0];
+				final boolean windows10Dark = actualValue == 0;
+				if (windows10Dark) metodos.SetarModoDark();
 			}
 		} else {
-			String s;
+			final String s;
 			try {
-				Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				final Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
+				final BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				s = stdInput.readLine();
-				if (s != null && s.contains("dark"))
-					metodos.SetarModoDark();
+				if (s != null && s.contains("dark")) metodos.SetarModoDark();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("ERROR.RUNNING.CMD");
@@ -302,29 +273,24 @@ public class grafico {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		btnNewButton = new JButton("Adicionar novo idlabel");
-		btnNewButton.setBounds(screenWidth / 2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,
-				screenHeight - screenHeight + 30);
+		btnNewButton.setBounds(screenWidth / 2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton);
 
 		btnNewButton_2 = new JButton("Adicionar Linguaguem");
-		btnNewButton_2.setBounds(screenWidth / 2 - 200, screenHeight - screenHeight + 35,
-				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_2.setBounds(screenWidth / 2 - 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_2);
 
 		btnNewButton_3 = new JButton("Verificar Duplicados");
-		btnNewButton_3.setBounds(screenWidth / 2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,
-				screenHeight - screenHeight + 30);
+		btnNewButton_3.setBounds(screenWidth / 2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_3);
 
 		btnNewButton_4 = new JButton("Remover Duplicados");
-		btnNewButton_4.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
-				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_4.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_4);
 		btnNewButton_4.hide();
 
 		btnNewButton_5 = new JButton("Traduzir");
-		btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
-				screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 		Window.getContentPane().add(btnNewButton_5);
 	}
 
@@ -341,7 +307,7 @@ public class grafico {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
-				String linguaguem = JOptionPane.showInputDialog(Window, "Insira o idlabel que deseja adicionar", null);
+				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira o idlabel que deseja adicionar", null);
 				if ((linguaguem == null) || linguaguem.isEmpty())
 					return;
 				for (int i = 0; i < Componentes_Linguagem.size(); i++) {
@@ -380,7 +346,7 @@ public class grafico {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
-				String linguaguem = JOptionPane.showInputDialog(Window, "Insira a nova linguaguem que deseja adicionar",
+				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira a nova linguaguem que deseja adicionar",
 						null);
 				if ((linguaguem == null) || linguaguem.isEmpty())
 					return;
@@ -410,8 +376,7 @@ public class grafico {
 		btnNewButton_3.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("deprecation")
 			public void mouseClicked(MouseEvent e) {
-				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,
-						screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 				metodos.SetarVerificacao(true);
 				model.setRowCount(0);
 				model.setColumnCount(0);
@@ -422,8 +387,8 @@ public class grafico {
 				}
 
 				int contagem = 0;
-				Set<String> stationCodes = new HashSet<String>();
-				Set<String> stationCodes2 = new HashSet<String>();
+				final Set<String> stationCodes = new HashSet<String>();
+				final Set<String> stationCodes2 = new HashSet<String>();
 
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
@@ -433,7 +398,7 @@ public class grafico {
 					// Verificar idlabels duplicados //
 					if (stationCodes.contains(oi)) {
 						contagem += 1;
-						Vector<String> arr = new Vector<String>();
+						Vector <String> arr = new Vector<String>();
 						arr.add((String) tudo.get("idlabel"));
 						for (int i = 0; i < langs.size(); i++) {
 							arr.add((String) content_rows.get(langs.get(i)));
@@ -447,7 +412,7 @@ public class grafico {
 					// Verificar default languague duplicada //
 					if (stationCodes2.contains(content_rows.get("pt"))) {
 						contagem += 1;
-						Vector<String> arr2 = new Vector<String>();
+						Vector <String> arr2 = new Vector<String>();
 						arr2.add((String) tudo.get("idlabel"));
 						for (int i = 0; i < langs.size(); i++) {
 							arr2.add((String) content_rows.get(langs.get(i)));
@@ -471,7 +436,7 @@ public class grafico {
 		btnNewButton_4.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
-				Set<String> stationCodes = new HashSet<String>();
+				final Set<String> stationCodes = new HashSet<String>();
 //				Set <String> stationCodes2 = new HashSet<String>();
 				JSONArray tempArray = new JSONArray();
 
@@ -508,7 +473,7 @@ public class grafico {
 
 					// all.washtaskended
 
-					Vector<String> arr = new Vector<String>();
+					final Vector<String> arr = new Vector<String>();
 					arr.add((String) tudo.get("idlabel"));
 					for (int i = 0; i < langs.size(); i++) {
 						arr.add((String) content_rows.get(langs.get(i)));
@@ -528,8 +493,7 @@ public class grafico {
 				metodos.SetarVerificacao(true);
 				table.requestFocus();
 				btnNewButton_4.hide();
-				btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,
-						screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 			}
 		});
 	}
@@ -538,7 +502,7 @@ public class grafico {
 		btnNewButton_5.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("unchecked")
 			public void mouseClicked(MouseEvent e) {
-				JSONArray tempArray = new JSONArray();
+				final JSONArray tempArray = new JSONArray();
 				JSONObject palavra = new JSONObject();
 				JSONObject palavra_traduzida = new JSONObject();
 
@@ -584,8 +548,7 @@ public class grafico {
 							JSONObject tudo = (JSONObject) iterator.next();
 							JSONObject content_rows = (JSONObject) tudo.get("lang");
 
-							if (palavra.get(langs.get(0)) != null
-									&& palavra.get(langs.get(0)) == content_rows.get(langs.get(0))) {
+							if (palavra.get(langs.get(0)) != null && palavra.get(langs.get(0)) == content_rows.get(langs.get(0))) {
 								content_rows.replace(langs.get(i), palavra_traduzida_final.get("translatedText"));
 							}
 						}
@@ -594,23 +557,28 @@ public class grafico {
 					}
 				}
 				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
-				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-					JSONObject tudo = (JSONObject) iterator.next();
-					JSONObject content_rows = (JSONObject) tudo.get("lang");
-
-					Vector<String> arr = new Vector<String>();
-					arr.add((String) tudo.get("idlabel"));
-					for (int ii = 0; ii < langs.size(); ii++) {
-						arr.add((String) content_rows.get(langs.get(ii)));
-					}
-					model.addRow(arr);
-				}
+				ActualizarNovamentColunas();
 				Rectangle rect = table.getCellRect(metodos.ObterNumeroLinha(), metodos.ObterNumeroLinha(), true);
 				table.scrollRectToVisible(rect);
 				table.setRowSelectionInterval(metodos.ObterNumeroLinha(), metodos.ObterNumeroLinha());
 				table.requestFocus();
 			}
 		});
+	}
+	
+	private void ActualizarNovamentColunas () {
+		for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
+			final JSONObject tudo = (JSONObject) iterator.next();
+			final JSONObject content_rows = (JSONObject) tudo.get("lang");
+
+			final Vector <String> arr = new Vector<String>();
+			arr.add((String) tudo.get("idlabel"));
+			for (int i = 0; i < langs.size(); i++) {
+				arr.add((String) content_rows.get(langs.get(i)));
+			}
+			model.addRow(arr);
+			table.requestFocus();
+		}
 	}
 
 }
