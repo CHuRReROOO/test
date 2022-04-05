@@ -63,7 +63,7 @@ public class grafico {
 	private JSONArray langs = new JSONArray();
 	private JSONArray Componentes_Linguagem = new JSONArray();
 
-	private boolean tecla = false;
+	private boolean tecla;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -86,8 +86,10 @@ public class grafico {
 	// implementar dark mode em linux (FALTA TESTAR)
 
 	/*
-	 * API Google Translate: Plan Basic: $0.00 / mo Characters: 500 / month Rate
-	 * Limit: 5 requests per second
+	 	API Google Translate: 
+	 		Plan Basic: $0.00 / mo 
+	 		Characters: 500 / month Rate
+	 		Limit: 5 requests per second
 	 */
 	// TODO //
 
@@ -99,7 +101,6 @@ public class grafico {
 
 		// atribuir content as linhas //
 		try(BufferedReader path = Files.newBufferedReader(Paths.get(metodos.ObterPath()), metodos.ObterCharset())) {
-//		try (FileReader path = new FileReader(metodos.ObterPath(), metodos.ObterCharset())) {
 			Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
@@ -308,13 +309,11 @@ public class grafico {
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
 				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira o idlabel que deseja adicionar", null);
-				if ((linguaguem == null) || linguaguem.isEmpty())
-					return;
+				if ((linguaguem == null) || linguaguem.isEmpty()) return;
 				for (int i = 0; i < Componentes_Linguagem.size(); i++) {
-					JSONObject texto_objeto = (JSONObject) Componentes_Linguagem.get(i);
+					final JSONObject texto_objeto = (JSONObject) Componentes_Linguagem.get(i);
 					if (linguaguem.equals(texto_objeto.get("idlabel"))) {
-						JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!",
-								"Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!", "Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE); 
 						return;
 					}
 				}
@@ -332,8 +331,7 @@ public class grafico {
 				metodos.EsceverJSON(Obter_Lista_Linguaguens.toString());
 				metodos.SetarVerificacao(true);
 				model.addRow(new Object[] { linguaguem });
-				Rectangle rect = table.getCellRect(Componentes_Linguagem.size() - 1, Componentes_Linguagem.size() - 1,
-						true);
+				Rectangle rect = table.getCellRect(Componentes_Linguagem.size() - 1, Componentes_Linguagem.size() - 1,true);
 				table.scrollRectToVisible(rect);
 				table.setRowSelectionInterval(Componentes_Linguagem.size() - 1, Componentes_Linguagem.size() - 1);
 				table.requestFocus();
