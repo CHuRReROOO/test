@@ -33,8 +33,11 @@ import com.registry.RegistryKey;
 import com.registry.RegistryValue;
 
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JScrollPane;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -84,6 +87,7 @@ public class grafico {
 
 	// TODO //
 	// implementar dark mode em linux (FALTA TESTAR)
+	// FIX // QUANDO CLICAMOS NO ESQ A FUNÇÃO DE "VerificarDuplicados" DESABILITA A EDIÇÃO DAS ROWS DA TABELA
 
 	/*
 	 	API Google Translate: 
@@ -167,6 +171,9 @@ public class grafico {
 				public void keyPressed(KeyEvent e) {
 					// TECLA ESQ VOLTA HÁ TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+//						DefaultCellEditor singleClickEditor = new DefaultCellEditor(new JTextField());
+//						table.setDefaultEditor(Object.class, singleClickEditor);
+
 						btnNewButton_4.hide();
 
 						tecla = true;
@@ -180,7 +187,6 @@ public class grafico {
 						}
 						
 						ActualizarNovamentColunas();
-						
 						tecla = false;
 						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 					}
@@ -378,8 +384,9 @@ public class grafico {
 		btnNewButton_3.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("deprecation")
 			public void mouseClicked(MouseEvent e) {
-				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				tecla = true;
 				metodos.SetarVerificacao(true);
+				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
 				model.setRowCount(0);
 				model.setColumnCount(0);
 				model.addColumn("idlabel");
@@ -428,9 +435,8 @@ public class grafico {
 					}
 
 				}
-				if (contagem > 0)
-					btnNewButton_4.show();
-				table.setDefaultEditor(Object.class, null);
+				if (contagem > 0) btnNewButton_4.show();
+//				table.setDefaultEditor(Object.class, null); // desativar edição
 				table.requestFocus();
 			}
 		});
