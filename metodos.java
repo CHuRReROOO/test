@@ -1,12 +1,16 @@
 package estagio;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -23,13 +27,13 @@ import org.json.simple.parser.ParseException;
 public class metodos {
 	private static String FicheiroJson = FileSystemView.getFileSystemView().getHomeDirectory() + "/saida.json";
 	private static Charset Charset = StandardCharsets.UTF_8;
-	private static Vector<Integer> ProcuraValor = new Vector<Integer>();
+	private static ArrayList<Integer> ProcuraValor = new ArrayList<Integer>();
 	private static JSONObject PalavraNova = new JSONObject();
 	private static JSONObject Objetos = new JSONObject();
 	private static JSONArray Arrays = new JSONArray();
-	private static boolean Adicionado;
-	private static boolean Procura;
-	private static int NumeroLinha;
+	private static boolean Adicionado = false;
+	private static boolean Procura = false;
+	private static int NumeroLinha = 0;
 
 	public static String ObterPath() {
 		return FicheiroJson;
@@ -55,11 +59,11 @@ public class metodos {
 		return Procura;
 	}
 
-	public static boolean SetarValorProcura(Vector<Integer> estado) {
-		return ProcuraValor.addAll(estado);
+	public static boolean SetarValorProcura(Vector<Integer> arr3) {
+		return ProcuraValor.addAll(arr3);
 	}
 
-	public static Vector<Integer> ObterValorProcura() {
+	public static ArrayList<Integer> ObterValorProcura() {
 		return ProcuraValor;
 	}
 
@@ -119,8 +123,7 @@ public class metodos {
 	}
 
 	public static void EsceverJSON(String objeto) {
-		try {
-			FileWriter writeFile = new FileWriter(ObterPath(), ObterCharset());
+		try(BufferedWriter writeFile = Files.newBufferedWriter(Paths.get(ObterPath()), ObterCharset())) {
 			writeFile.write(objeto);
 			writeFile.close();
 		} catch (IOException e) {
