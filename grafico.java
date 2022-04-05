@@ -90,7 +90,9 @@ public class grafico {
 	 		Plan Basic: $0.00 / mo 
 	 		Characters: 500 / month Rate
 	 		Limit: 5 requests per second
+	 		Website: https://rapidapi.com/googlecloud/api/google-translate1/
 	 */
+	
 	// TODO //
 
 	private void initialize() {
