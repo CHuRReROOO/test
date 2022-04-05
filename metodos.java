@@ -28,7 +28,7 @@ import org.json.simple.parser.ParseException;
 public class metodos {
 	private static String FicheiroJson = FileSystemView.getFileSystemView().getHomeDirectory() + "/saida.json";
 	private static Charset Charset = StandardCharsets.UTF_8;
-	private static ArrayList<Integer> ProcuraValor = new ArrayList<Integer>();
+	private static Vector<Integer> ProcuraValor = new Vector<Integer>();
 	private static JSONObject PalavraNova = new JSONObject();
 	private static JSONObject Objetos = new JSONObject();
 	private static JSONArray Arrays = new JSONArray();
@@ -64,7 +64,7 @@ public class metodos {
 		return ProcuraValor.addAll(arr3);
 	}
 
-	public static ArrayList<Integer> ObterValorProcura() {
+	public static Vector<Integer> ObterValorProcura() {
 		return ProcuraValor;
 	}
 
