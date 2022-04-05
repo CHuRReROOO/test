@@ -1,6 +1,7 @@
 package estagio;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -31,9 +32,9 @@ public class metodos {
 	private static JSONObject PalavraNova = new JSONObject();
 	private static JSONObject Objetos = new JSONObject();
 	private static JSONArray Arrays = new JSONArray();
-	private static boolean Adicionado = false;
-	private static boolean Procura = false;
-	private static int NumeroLinha = 0;
+	private static boolean Adicionado;
+	private static boolean Procura;
+	private static int NumeroLinha;
 
 	public static String ObterPath() {
 		return FicheiroJson;
@@ -76,7 +77,7 @@ public class metodos {
 	}
 
 	public static void SetarObjetosJson(String ObjetoArray, int Numero) {
-		try (FileReader path = new FileReader(ObterPath(), ObterCharset())) {
+		try(BufferedReader path = Files.newBufferedReader(Paths.get(ObterPath()), ObterCharset())) {
 			final JSONObject Obter_Lista_Linguaguens = (JSONObject) new JSONParser().parse(path);
 			final JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			final JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
@@ -173,4 +174,5 @@ public class metodos {
 	public static int ObterNumeroLinha() {
 		return NumeroLinha;
 	}
+
 }
