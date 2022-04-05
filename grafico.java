@@ -47,21 +47,21 @@ import javax.swing.event.TableModelListener;
 public class grafico {
 
 	private JFrame Window;
-	private JTable table;
-	private DefaultTableModel model;
-	private JButton btnNewButton;
-	private JButton btnNewButton_2;
-	private JButton btnNewButton_3;
-	private JButton btnNewButton_4;
-	private JButton btnNewButton_5;
+	private static JTable table;
+	private static DefaultTableModel model;
+	private static JButton btnNewButton;
+	private static JButton btnNewButton_2;
+	private static JButton btnNewButton_3;
+	private static JButton btnNewButton_4;
+	private static JButton btnNewButton_5;
 
-	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private int screenHeight = screenSize.height;
-	private int screenWidth = screenSize.width;
+	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private final static int screenHeight = screenSize.height;
+	private final static int screenWidth = screenSize.width;
 
-	private JSONObject Obter_Lista_Linguaguens = new JSONObject();
-	private JSONArray langs = new JSONArray();
-	private JSONArray Componentes_Linguagem = new JSONArray();
+	private static JSONObject Obter_Lista_Linguaguens = new JSONObject();
+	private static JSONArray langs = new JSONArray();
+	private static JSONArray Componentes_Linguagem = new JSONArray();
 
 	private boolean tecla;
 
@@ -246,6 +246,7 @@ public class grafico {
 				final BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				s = stdInput.readLine();
 				if (s != null && s.contains("dark")) metodos.SetarModoDark();
+				stdInput.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("ERROR.RUNNING.CMD");
