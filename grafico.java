@@ -46,7 +46,7 @@ import javax.swing.event.TableModelListener;
 
 public class grafico {
 
-	private JFrame Window;
+	private transient JFrame Window;
 	private static JTable table;
 	private static DefaultTableModel model;
 	private static JButton btnNewButton;
@@ -138,7 +138,7 @@ public class grafico {
 					} else {
 						metodos.AtribuirPalavraNova((JSONObject) Componentes_Linguagem.get(e.getFirstRow()));
 					}
-					String palavra_nova_editada = table.getModel().getValueAt(e.getFirstRow(), e.getColumn()) + "";
+					String palavra_nova_editada = table.getModel().getValueAt(e.getFirstRow(), e.getColumn()).toString();
 					for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 						JSONObject tudo = (JSONObject) iterator.next();
 						JSONObject content_rows = (JSONObject) tudo.get("lang");
@@ -195,9 +195,11 @@ public class grafico {
 							return;
 						int cont = 0;
 						model.setRowCount(0);
+						Vector<String> arr2;
+						Vector<Integer> arr3;
 						for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
-							final Vector<String> arr2 = new Vector<String>();
-							final Vector<Integer> arr3 = new Vector<Integer>();
+							arr2 = new Vector<String>();
+							arr3 = new Vector<Integer>();
 							final JSONObject tudo = (JSONObject) iterator.next();
 							final JSONObject content_rows = (JSONObject) tudo.get("lang");
 							cont += 1;
@@ -313,12 +315,14 @@ public class grafico {
 				btnNewButton_4.hide();
 				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira o idlabel que deseja adicionar", null);
 				if ((linguaguem == null) || linguaguem.isEmpty()) return;
+				JSONObject texto_objeto = new JSONObject ();
 				for (int i = 0; i < Componentes_Linguagem.size(); i++) {
-					final JSONObject texto_objeto = (JSONObject) Componentes_Linguagem.get(i);
-					if (linguaguem.equals(texto_objeto.get("idlabel"))) {
-						JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!", "Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE); 
-						return;
-					}
+					texto_objeto = (JSONObject) Componentes_Linguagem.get(i);
+				}
+				
+				if (linguaguem.equals(texto_objeto.get("idlabel"))) {
+					JOptionPane.showMessageDialog(new JFrame(), "Este idlabel [" + linguaguem + "] já existe!", "Erro: idlabel já existe", JOptionPane.ERROR_MESSAGE); 
+					return;
 				}
 
 				JSONObject objeto_id = new JSONObject();
@@ -347,14 +351,11 @@ public class grafico {
 			@SuppressWarnings({ "unchecked", "deprecation" })
 			public void mouseClicked(MouseEvent e) {
 				btnNewButton_4.hide();
-				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira a nova linguaguem que deseja adicionar",
-						null);
-				if ((linguaguem == null) || linguaguem.isEmpty())
-					return;
+				final String linguaguem = JOptionPane.showInputDialog(Window, "Insira a nova linguaguem que deseja adicionar",null);
+				if ((linguaguem == null) || linguaguem.isEmpty()) return;
 				for (int i = 0; i < metodos.ObterArraysJson().size(); i++) {
 					if (linguaguem.equals(metodos.ObterArraysJson().get(i))) {
-						JOptionPane.showMessageDialog(new JFrame(), "A linguaguem [" + linguaguem + "] j� existe!",
-								"Erro: Linguaguem j� existe", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(new JFrame(), "A linguaguem [" + linguaguem + "] já existe!", "Erro: Linguaguem já existe", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -390,6 +391,8 @@ public class grafico {
 				int contagem = 0;
 				final Set<String> stationCodes = new HashSet<String>();
 				final Set<String> stationCodes2 = new HashSet<String>();
+				Vector <String> arr;
+				Vector <String> arr2;
 
 				for (Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 					JSONObject tudo = (JSONObject) iterator.next();
@@ -399,7 +402,7 @@ public class grafico {
 					// Verificar idlabels duplicados //
 					if (stationCodes.contains(oi)) {
 						contagem += 1;
-						Vector <String> arr = new Vector<String>();
+						arr = new Vector<String>();
 						arr.add((String) tudo.get("idlabel"));
 						for (int i = 0; i < langs.size(); i++) {
 							arr.add((String) content_rows.get(langs.get(i)));
@@ -413,7 +416,7 @@ public class grafico {
 					// Verificar default languague duplicada //
 					if (stationCodes2.contains(content_rows.get("pt"))) {
 						contagem += 1;
-						Vector <String> arr2 = new Vector<String>();
+						arr2 = new Vector<String>();
 						arr2.add((String) tudo.get("idlabel"));
 						for (int i = 0; i < langs.size(); i++) {
 							arr2.add((String) content_rows.get(langs.get(i)));
@@ -440,7 +443,9 @@ public class grafico {
 				final Set<String> stationCodes = new HashSet<String>();
 //				Set <String> stationCodes2 = new HashSet<String>();
 				JSONArray tempArray = new JSONArray();
-
+				
+				Vector<String> arr;
+				
 				model.setRowCount(0);
 				model.setColumnCount(0);
 
@@ -474,7 +479,7 @@ public class grafico {
 
 					// all.washtaskended
 
-					final Vector<String> arr = new Vector<String>();
+					arr = new Vector<String>();
 					arr.add((String) tudo.get("idlabel"));
 					for (int i = 0; i < langs.size(); i++) {
 						arr.add((String) content_rows.get(langs.get(i)));
