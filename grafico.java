@@ -183,7 +183,7 @@ public class grafico {
 						
 						ActualizarNovamentColunas();
 						tecla = false;
-						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, 35, 180, 30);
 					}
 
 					// PROCURAR PALAVRA CTRL + F //
@@ -218,7 +218,7 @@ public class grafico {
 						cont = 0;
 						metodos.SetarVerificacao(false);
 						metodos.SetarEstadoProcura(true);
-						btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+						btnNewButton_5.setBounds(screenWidth / 2 + 200, 35, 180, 30);
 					}
 				}
 			});
@@ -280,24 +280,24 @@ public class grafico {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		btnNewButton = new JButton("Adicionar novo idlabel");
-		btnNewButton.setBounds(screenWidth / 2 - 400, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,screenHeight - screenHeight + 30);
+		btnNewButton.setBounds(screenWidth / 2 - 400, 35, 180, 30);
 		Window.getContentPane().add(btnNewButton);
 
 		btnNewButton_2 = new JButton("Adicionar Linguaguem");
-		btnNewButton_2.setBounds(screenWidth / 2 - 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_2.setBounds(screenWidth / 2 - 200, 35, 180, 30);
 		Window.getContentPane().add(btnNewButton_2);
 
 		btnNewButton_3 = new JButton("Verificar Duplicados");
-		btnNewButton_3.setBounds(screenWidth / 2, screenHeight - screenHeight + 35, screenWidth - screenWidth + 180,screenHeight - screenHeight + 30);
+		btnNewButton_3.setBounds(screenWidth / 2, 35, 180, 30);
 		Window.getContentPane().add(btnNewButton_3);
 
 		btnNewButton_4 = new JButton("Remover Duplicados");
-		btnNewButton_4.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_4.setBounds(screenWidth / 2 + 200, 35, 180, 30);
 		Window.getContentPane().add(btnNewButton_4);
 		btnNewButton_4.hide();
 
 		btnNewButton_5 = new JButton("Traduzir");
-		btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+		btnNewButton_5.setBounds(screenWidth / 2 + 200, 35, 180, 30);
 		Window.getContentPane().add(btnNewButton_5);
 	}
 
@@ -381,7 +381,7 @@ public class grafico {
 			public void mouseClicked(MouseEvent e) {
 				tecla = true;
 				metodos.SetarVerificacao(true);
-				btnNewButton_5.setBounds(screenWidth / 2 + 400, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 400, 35, 180, 30);
 				model.setRowCount(0);
 				model.setColumnCount(0);
 				model.addColumn("idlabel");
@@ -500,7 +500,7 @@ public class grafico {
 				metodos.SetarVerificacao(true);
 				table.requestFocus();
 				btnNewButton_4.hide();
-				btnNewButton_5.setBounds(screenWidth / 2 + 200, screenHeight - screenHeight + 35,screenWidth - screenWidth + 180, screenHeight - screenHeight + 30);
+				btnNewButton_5.setBounds(screenWidth / 2 + 200, 35, 180, 30);
 			}
 		});
 	}
