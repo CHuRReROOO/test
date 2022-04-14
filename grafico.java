@@ -33,11 +33,8 @@ import com.registry.RegistryKey;
 import com.registry.RegistryValue;
 
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.JScrollPane;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -86,8 +83,6 @@ public class grafico {
 	}
 
 	// TODO //
-	// implementar dark mode em linux (FALTA TESTAR)
-	// FIX // QUANDO CLICAMOS NO ESQ A FUNÇÃO DE "VerificarDuplicados" DESABILITA A EDIÇÃO DAS ROWS DA TABELA
 
 	/*
 	 	API Google Translate: 
@@ -169,7 +164,7 @@ public class grafico {
 			table.addKeyListener(new KeyAdapter() {
 				@SuppressWarnings("deprecation")
 				public void keyPressed(KeyEvent e) {
-					// TECLA ESQ VOLTA HÁ TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
+					// TECLA ESQ VOLTA H� TABELA INICIAL MAS COM O CONTEUDO ACTUALIZADO //
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 //						DefaultCellEditor singleClickEditor = new DefaultCellEditor(new JTextField());
 //						table.setDefaultEditor(Object.class, singleClickEditor);
@@ -253,7 +248,7 @@ public class grafico {
 				final Process p = Runtime.getRuntime().exec("gsettings get org.gnome.desktop.interface gtk-theme");
 				final BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				s = stdInput.readLine();
-				if (s != null && s.contains("dark")) metodos.SetarModoDark();
+				if (s != null && (s.contains("dark")) || s != null && (s.contains("Dark")) ) metodos.SetarModoDark();
 				stdInput.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -436,7 +431,7 @@ public class grafico {
 
 				}
 				if (contagem > 0) btnNewButton_4.show();
-//				table.setDefaultEditor(Object.class, null); // desativar edição
+//				table.setDefaultEditor(Object.class, null); // desativar edi��o
 				table.requestFocus();
 			}
 		});
@@ -536,16 +531,15 @@ public class grafico {
 
 				palavra = (JSONObject) tempArray.get(metodos.ObterNumeroLinha());
 
+				String api = "ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8"; // c98c748fd5msh420678769cff72fp104aadjsnb2916da78f6e
 				for (int i = 1; i < langs.size(); i++) {
 					HttpRequest request = HttpRequest.newBuilder()
 							.uri(URI.create("https://google-translate1.p.rapidapi.com/language/translate/v2"))
 							.header("content-type", "application/x-www-form-urlencoded")
 							.header("Accept-Encoding", "application/gzip")
 							.header("X-RapidAPI-Host", "google-translate1.p.rapidapi.com")
-							.header("X-RapidAPI-Key", "ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8") // ae21ce86b8mshe29587aaed14714p18b94fjsn7da5179cc1e8 c98c748fd5msh420678769cff72fp104aadjsnb2916da78f6e
-							.method("POST",
-									HttpRequest.BodyPublishers
-											.ofString("q=" + palavra.get(langs.get(0)) + "&target=" + langs.get(i)))
+							.header("X-RapidAPI-Key", api)
+							.method("POST",HttpRequest.BodyPublishers.ofString("q=" + palavra.get(langs.get(0)) + "&target=" + langs.get(i)))
 							.build();
 					HttpResponse<String> response;
 					try {
