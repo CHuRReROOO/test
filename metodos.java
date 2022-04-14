@@ -4,14 +4,11 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -174,5 +171,4 @@ public class metodos {
 	public static int ObterNumeroLinha() {
 		return NumeroLinha;
 	}
-
 }
