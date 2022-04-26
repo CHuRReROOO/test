@@ -123,7 +123,7 @@ public class grafico {
 			ActualizarNovamentColunas();
 
 			// CRIAR BACKUP AUTOMATICO
-			Auto_Backup();
+			AutoBackup();
 			
 			// ADICIONAR NOVA LINHA //
 			AdicionarLinha();
@@ -141,13 +141,13 @@ public class grafico {
 			Traduzir();
 			
 			// PROCURAR COM BOTAO
-			Procurar_Botao();
+			ProcurarBotao();
 			
 			// CRIAR BACKUP
-			Criar_Backup();
+			CriarBackup();
 			
 			// ABRIR BACKUP
-			Abrir_Backup();
+			AbrirBackup();
 
 			// verificar mudancas nas rows e escrever mudancas no json //
 			table.getModel().addTableModelListener(new TableModelListener() {
@@ -644,7 +644,7 @@ public class grafico {
 		}
 	}
 	
-	private void Procurar_Botao () {
+	private void ProcurarBotao () {
 		btnNewButton_6.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("deprecation")
 			public void mouseClicked(MouseEvent e) {
@@ -679,7 +679,7 @@ public class grafico {
 		});
 	}
 
-	private void Criar_Backup () {
+	private void CriarBackup () {
 		btnNewButton_7.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				String nome_ficheiro = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss'.json'").format(new Date());
@@ -704,7 +704,7 @@ public class grafico {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void Auto_Backup () {
+	private void AutoBackup () {
 		String nome_ficheiro = new SimpleDateFormat("'AUTO_BACKUP' dd-MM-yyyy HH-mm-ss'.json'").format(new Date());
 		File file = new File(nome_ficheiro);
 		try {
@@ -724,7 +724,7 @@ public class grafico {
 		}
 	}
 	
-	private void Abrir_Backup () {
+	private void AbrirBackup () {
 		btnNewButton_8.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				String nome_backup = JOptionPane.showInputDialog(Window , "Insira o nome do backup", "Abrir Backup", JOptionPane.INFORMATION_MESSAGE);
