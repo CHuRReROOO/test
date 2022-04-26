@@ -1,9 +1,8 @@
-package estagio;
+package pacote_json;
 
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -79,27 +78,18 @@ public class metodos {
 			final JSONArray langs = (JSONArray) Obter_Lista_Linguaguens.get("availablelangs");
 			final JSONArray Componentes_Linguagem = (JSONArray) Obter_Lista_Linguaguens.get("elements");
 
-			if (ObjetoArray.equals("Objeto") && Numero == 1)
-				AtribuirObjetoJson(Obter_Lista_Linguaguens);
-			if (ObjetoArray.equals("Array") && Numero == 1)
-				AtribuirArraysJson(langs);
-			if (ObjetoArray.equals("Array") && Numero == 2)
-				AtribuirArraysJson(Componentes_Linguagem);
+			if (ObjetoArray.equals("Objeto") && Numero == 1) AtribuirObjetoJson(Obter_Lista_Linguaguens);
+			if (ObjetoArray.equals("Array") && Numero == 1)	AtribuirArraysJson(langs);
+			if (ObjetoArray.equals("Array") && Numero == 2)	AtribuirArraysJson(Componentes_Linguagem);
 			
 			for (final Iterator<?> iterator = Componentes_Linguagem.iterator(); iterator.hasNext();) {
 				final JSONObject tudo = (JSONObject) iterator.next();
 				final JSONObject content_rows = (JSONObject) tudo.get("lang");
 
-				if (ObjetoArray.equals("Objeto") && Numero == 2)
-					AtribuirObjetoJson(tudo);
-				if (ObjetoArray.equals("Objeto") && Numero == 3)
-					AtribuirObjetoJson(content_rows);
+				if (ObjetoArray.equals("Objeto") && Numero == 2) AtribuirObjetoJson(tudo);
+				if (ObjetoArray.equals("Objeto") && Numero == 3) AtribuirObjetoJson(content_rows);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
 	}
@@ -151,15 +141,7 @@ public class metodos {
 					break;
 				}
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
 	}
